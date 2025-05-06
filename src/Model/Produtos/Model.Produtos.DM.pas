@@ -44,14 +44,17 @@ type
     QProdutosBuscaID_SUBGRUPO: TIntegerField;
     QProdutosBuscaSUBGRUPO_NOME: TStringField;
     QProdutosCadastroIMAGEM: TStringField;
+    QLookID: TIntegerField;
+    QLookPRECO_VENDA: TFMTBCDField;
+    QLookUNIDADE: TStringField;
     procedure QProdutosCadastroAfterInsert(DataSet: TDataSet);
     procedure QProdutosCadastroBeforePost(DataSet: TDataSet);
   private
     { Private declarations }
   public
+    function LookProdutos(const ACodBarras: String): Boolean;
     procedure CadastrarGet(const AIdProduto: Integer);
     procedure ProdutosBuscar(const Acondicao: string);
-    procedure LookProdutos(const AIdProduto: Integer);
     procedure ValidarDadosQueryCadastro;
     { Public declarations }
   end;
@@ -99,11 +102,13 @@ begin
   QProdutosBusca.Open;
 end;
 
-procedure TModelProdutosDM.LookProdutos(const AIdProduto: Integer);
+function TModelProdutosDM.LookProdutos(const ACodBarras: String): Boolean;
 begin
   QLook.close;
-  QLook.ParamByName('IDPRODUTO').AsInteger := AIdProduto;
+  QLook.ParamByName('CodBarras').AsString := ACodBarras;
   QLook.Open;
+
+  Result := not QLook.IsEmpty;
 end;
 
 procedure TModelProdutosDM.QProdutosCadastroAfterInsert(DataSet: TDataSet);

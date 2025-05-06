@@ -160,22 +160,43 @@ object ModelProdutosDM: TModelProdutosDM
   object QLook: TFDQuery
     Connection = ModelConexaoDM.FDConnection1
     SQL.Strings = (
-      'SELECT NOME'
+      'SELECT FIRST 1'
+      'ID,'
+      'NOME,'
+      'PRECO_VENDA,'
+      'UNIDADE'
       'FROM PRODUTOS'
-      'WHERE (ID = :IDPRODUTO)')
+      'WHERE (CODIGO_BARRAS = :CODBARRAS)')
     Left = 218
     Top = 115
     ParamData = <
       item
-        Name = 'IDPRODUTO'
-        DataType = ftInteger
+        Name = 'CODBARRAS'
+        DataType = ftString
         ParamType = ptInput
+        Size = 20
         Value = Null
       end>
+    object QLookID: TIntegerField
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
     object QLookNOME: TStringField
       FieldName = 'NOME'
       Origin = 'NOME'
       Size = 100
+    end
+    object QLookPRECO_VENDA: TFMTBCDField
+      FieldName = 'PRECO_VENDA'
+      Origin = 'PRECO_VENDA'
+      Precision = 18
+      Size = 2
+    end
+    object QLookUNIDADE: TStringField
+      FieldName = 'UNIDADE'
+      Origin = 'UNIDADE'
     end
   end
 end

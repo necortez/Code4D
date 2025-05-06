@@ -21,9 +21,80 @@ type
       class function GetpastaImg: string;
       class function GetPastaImgProdutos: string;
       class procedure TratarExceptionsFieldName(const AForm: TForm; const E: ExceptionFieldName);
+      class procedure PegarDadosLancamento(const AValue: string; var ACodigo: string;
+      var AQtde, ADesconto, AAcrescimo: Double);
   end;
 
 implementation
+
+class procedure TUtils.PegarDadosLancamento(const AValue: string; var ACodigo: string;
+var AQtde, ADesconto, AAcrescimo: Double);
+var
+  LValue, LQtde, LDesconto, LAcrescimo: string;
+  LPosAsterisco, LPosMais, LPosMenos: Integer;
+  i: integer;
+begin
+  LValue := AValue.Trim;
+  ACodigo := '';
+  AQtde := 1;
+  ADesconto := 0;
+  AAcrescimo := 0;
+
+  LPosAsterisco := Pos('*', LValue);
+  LPosMais := Pos('+', LValue);
+  LPosMenos := Pos('-', LValue);
+
+  if(LPosAsterisco <= 0) and(LPosMais <= 0) and(LPosMenos <= 0)then
+  begin
+    ACodigo := LValue;
+    Exit;
+  end;
+
+  //PEGAR O CODIGO
+  for i := Lvalue.Length downto 1 do
+    begin
+      if (LValue[i]= '*')or(LValue[i] = '-')or(LValue[i] = '+') then
+        Break;
+
+      ACodigo := LValue[i] + ACodigo;
+    end;
+
+  if (LPosMais > 0) then
+  begin
+    for i := Pred(LPosMais) downto 1 do
+      begin
+        if (LValue[i] = '*')or(LValue[i] = '-') then
+          Break;
+        LAcrescimo := LValue[i] + LAcrescimo;
+      end;
+    AAcrescimo := StrToFloatDef(LAcrescimo, 0);
+  end;
+
+  if (LPosMenos > 0) then
+  begin
+    for i := Pred(LPosMenos) downto 1 do
+      begin
+        if (LValue[i] = '*')or(LValue[i] = '+') then
+          Break;
+        LDesconto := LValue[i] + LDesconto;
+      end;
+    ADesconto := StrToFloatDef(LDesconto, 0);
+  end;
+
+  if (LPosAsterisco > 0) then
+  begin
+    for i := Pred(LPosAsterisco) downto 1 do
+      begin
+        if (LValue[i] = '+')or(LValue[i] = '-') then
+          Break;
+        LQtde := LValue[i] + LQtde;
+      end;
+    AQtde := StrToFloatDef(LQtde, 0);
+  end;
+
+end;
+
+
 
 class procedure TUtils.TratarExceptionsFieldName(const AForm: TForm;
   const E: ExceptionFieldName);
